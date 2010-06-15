@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dashboard"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/background"
+>
+       <ImageView
+           android:src="@drawable/grass_border"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentBottom="true"
+           android:layout_alignParentLeft="true"
+       ></ImageView>
+       <Button
+           android:id="@+id/create_demand"
+           android:text="@string/create_demand"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_alignParentTop="true"
+           android:layout_alignParentRight="true"
+       ></Button>
+       <Button
+           android:id="@+id/dashboard_list"
+           android:text="@string/dashboard_refresh_list"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_toLeftOf="@id/create_demand"
+       ></Button>
+       <ListView
+           android:id="@android:id/list"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content"
+           android:layout_below="@id/create_demand"
+           android:choiceMode="singleChoice"
+           android:divider="@color/row_background"
+       ></ListView>
+       <TextView
+           android:id="@android:id/empty"
+           android:layout_width="fill_parent"
+           android:layout_height="wrap_content"
+           android:text="@string/dashboard_list_no_activity_yet"
+           android:layout_below="@id/create_demand"
+       ></TextView>
+    <!--
+    <ProgressBar
+        android:id="@+id/load_recent_activities"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+    ></ProgressBar>
+    -->
+</RelativeLayout>

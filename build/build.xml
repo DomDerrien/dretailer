@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE project>
+
+<project
+    basedir=".."
+    default="test"
+	name="android_build"
+>
+
+    <description>
+        Android application build system
+    </description>
+
+    <!-- ================ -->
+    <!-- Public variables -->
+    <!-- ================ -->
+
+    <property environment="env"/>
+
+    <property file="${user.home}/local.build.properties"
+        description="All values defined in this file take precedence. Because this file is not in the SCM, each developer can setup his/her environment independently."
+    />
+
+    <property name="app.release"
+        description="Planned release of this build"
+        value="21"
+    />
+	
+    <property name="app.companyName"
+        description="Company name"
+        value="Steven Milstein &amp; Associates inc."
+    />
+
+    <property name="app.productName"
+        description="Product name"
+        value="Twetailer"
+    />
+
+    <property name="app.productWebsite"
+        description="Product website"
+        value="http://www.twetailer.com/"
+    />
+
+    <property name="app.productShortName"
+        description="Short name of the company used for the JavaScript namespace"
+        value="twetailer"
+    />
+
+    <!-- ============== -->
+    <!-- Public targets -->
+    <!-- ============== -->
+
+    <target name="clean" description="remove all created/copied files/directories at setup time" depends="step-info-get, step-configuration-clean">
+	</target>
+
+    <target name="init" description="get external dependencies and prepare the build environment" depends="step-info-get, step-configuration-push">
+	</target>
+	
+    <target name="compile" description="compile the application" depends="step-info-get, step-statistics-get, step-file-format">
+	</target>
+
+    <target name="package" description="compile and package the application"  depends="compile, step-configuration-push">
+    </target>
+
+    <target name="distribute" description="compile, package, and prepare the application" depends="init, test, package">
+    </target>
+
+    <target name="test" description="compile, package, and test the application" depends="compile, step-configuration-push">
+	</target>
+	
+    <!-- ================= -->
+    <!-- Private variables -->
+    <!-- ================= -->
+
+    <defaultexcludes add="**/.copyarea.db" />
+
+    <!-- Property set later by "step-info-get" because <property /> are immutable
+    <property name="app.taggedDir" value="tagged" />
+    -->
+
+    <xmlcatalog id="tmx.dtd">
+        <dtd
+            location="deps/tools/i18n/tmx14.dtd"
+            publicId="-//LISA OSCAR:1998//DTD for Translation Memory eXchange//EN"
+        />
+    </xmlcatalog>
+
+    <path id="tmxconverter.classpath">
+    	<!-- Should be documented when the TMX techonology is ported here -->
+	</path>
+
+    <path id="java.compile.classpath">
+	</path>
+
+    <!-- =============== -->
+    <!-- Private targets -->
+    <!-- =============== -->
+
+    <target name="step-info-get" unless="app.stageId">
+        <tstamp description="Set the properties {DSTAMP, TSTAMP, TODAY} to the current time">
+            <format pattern="yyyy" property="app.stageYear" />
+        </tstamp>
+        <property name="app.stageId" value="${DSTAMP}.${TSTAMP}" />
+        <property name="app.taggedDir" value="${app.stageId}" />
+        <echo>
+            ${ant.project.name}
+            ${TODAY} (${app.stageId})
+            JVM version detected by Ant: ${ant.java.version}
+        </echo>
+    </target>
+
+    <target name="step-configuration-clean">
+    </target>
+    
+    <target name="step-configuration-push">
+    </target>
+    
+    <target name="step-statistics-get" unless="testcase">
+        <resourcecount property="java.source.line.count">
+            <tokens>
+                <linetokenizer includedelims="yes" />
+                <fileset dir="src" includes="**/*.java" excludes="**/domderrien/**" />
+            </tokens>
+        </resourcecount>
+        <resourcecount property="xml.line.count">
+            <tokens>
+                <linetokenizer includedelims="yes" />
+                <fileset dir="res" includes="**/*.xml*,**/*.xsl,**/*.tmx" excludes="**/domderrien/**" />
+            </tokens>
+        </resourcecount>
+        <echo>
+            --
+            Statistics:
+               Java source files: ${java.source.line.count} lines
+               Resource (XML, XSL, TMX) files: ${xml.line.count} lines
+        </echo>
+    </target>
+
+    <target name="step-file-format" unless="testcase">
+        <fixcrlf
+            eof="remove"
+            eol="crlf"
+            excludes="**/dojo/**/*.*"
+            includes="**/*.java,**/*.tmx,**/*.xml"
+            srcdir="res"
+            tab="remove"
+            tablength="4"
+        />
+        <fixcrlf
+            eof="remove"
+            eol="crlf"
+            excludes="**/dojo/**/*.*"
+            includes="**/*.java,**/*.tmx,**/*.xml"
+            srcdir="src"
+            tab="remove"
+            tablength="4"
+        />
+        <replaceregexp byline="true" flags="gm">
+            <regexp pattern="\s+$" />
+            <substitution expression=""/>
+            <fileset
+                dir="res"
+                excludes="**/dojo/**/*.*"
+                includes="**/*.java,**/*.tmx,**/*.xml"
+            />
+        </replaceregexp>
+        <replaceregexp byline="true" flags="gm">
+            <regexp pattern="\s+$" />
+            <substitution expression=""/>
+            <fileset
+                dir="src"
+                excludes="**/dojo/**/*.*"
+                includes="**/*.java,**/*.tmx,**/*.xml"
+            />
+        </replaceregexp>
+	</target>
+</project>

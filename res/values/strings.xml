@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- commands -->
+    <string name="create_demand">New Game</string>
+    <string name="update_demand">Update</string>
+    <string name="cancel_demand">Cancel</string>
+    <string name="view_demand">View</string>
+    <string name="view_proposal">View</string>
+    <string name="decline_proposal">Decline</string>
+    <string name="confirm_proposal">Confirm</string>
+    <string name="close_demand">Close</string>
+    <string name="close_proposal">Close</string>
+
+    <!-- states -->
+    <string name="open_state">Open</string>
+    <string name="invalid_state">Invalid</string>
+    <string name="published_state">Published</string>
+    <string name="confirmed_state">Confirmed</string>
+    <string name="declined_state">Declined</string>
+    <string name="cancelled_state">Cancelled</string>
+    <string name="closed_state">Closed</string>
+
+    <!-- dashboard related labels -->
+    <string name="dashboard_name">Twetailer Reservation Desk</string>
+    <string name="dashboard_preferences">Preferences</string>
+    <string name="dashboard_refresh_list">Get Updates</string>
+    <string name="dashboard_view_proposals">View Proposal(s)</string>
+    <string name="dashboard_reset_list">Reload List</string>
+    <string name="dashboard_list_no_activity_yet">No Activity Yet!</string>
+    <string name="dashboard_fetching_data_message">Fetching Data...</string>
+    <string name="criteria_label">Criteria</string>
+
+    <!-- demand edit pane related labels -->
+    <string name="demand_pane_region">Region:</string>
+    <string name="demand_pane_region_prompt">Select a region</string>
+    <string name="demand_pane_range">Distance:</string>
+    <string name="demand_pane_range_unit_km">km</string>
+    <string name="demand_pane_dueDate">Tee-Off:</string>
+    <string name="demand_pane_quantity">Players:</string>
+    <string name="demand_pane_criteria">Additional Information:</string>
+
+    <string name="email_type_home">Home</string>
+    <string name="email_type_work">Work</string>
+    <string name="email_type_other">Other</string>
+    <string name="email_type_mobile">Mobile</string>
+    <string name="email_type_custom">Custom</string>
+    <string name="email_type_unknown">Unknown</string>
+
+    <string name="demand_pane_cc">CC:</string>
+    <string name="demand_pane_alert_no_email_address">Email address already added!</string>
+    <string name="demand_pane_alert_one_email_added">Email address (type {0}) just added!</string>
+
+    <string name="demand_pane_see_proposals">See Proposals</string>
+
+    <!-- demand edit pane related labels -->
+    <string name="proposal_pane_state">State:</string>
+    <string name="proposal_pane_dueDate">Tee-Off:</string>
+    <string name="proposal_pane_quantity">Players:</string>
+    <string name="proposal_pane_price">Price:</string>
+    <string name="proposal_pane_total">Total:</string>
+    <string name="proposal_pane_criteria">Additional Information:</string>
+    <string name="proposal_pane_store">Golf course:</string>
+
+    <string name="proposal_pane_previous">&lt;&lt;</string>
+    <string name="proposal_pane_next">&gt;&gt;</string>
+
+    <!-- preferences related labels -->
+    <string name="preferences_name">Preferences</string>
+
+    <string name="preference_consumer_key_base_name">Your Consumer ID: {0}</string>
+    <string name="preference_consumer_key_name">Your Consumer ID</string>
+    <string name="preference_consumer_key_summary">You need to temporarily specify your Consumer ID. This will be refactored later.</string>
+    <string name="preference_consumer_key_default_value">0</string>
+    <string name="preference_consumer_key_edit_box_title">Your Consumer ID</string>
+
+    <string name="preference_region_list">Region list</string>
+    <string name="preference_region_list_need_update">Region missing!</string>
+
+    <string name="preference_refresh_rate">Refresh Rate</string>
+
+    <string name="money_pattern">{1}{0}</string>
+    <string name="money_dollar_US">$</string>
+
+</resources>

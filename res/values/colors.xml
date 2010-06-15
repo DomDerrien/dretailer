@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="transparent">#0000</color>
+    <color name="background">#fff</color>
+    <color name="row_background">#a0a0</color>
+    <color name="row_foreground">#000</color>
+    <color name="row_foreground_highlight">#fff</color>
+    <color name="property_name">#ddd</color>
+    <color name="property_value">#fff</color>
+</resources>

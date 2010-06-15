@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/preferences_name">
+        <EditTextPreference
+            android:name="@string/preference_consumer_key_name"
+            android:summary="@string/preference_consumer_key_summary"
+            android:defaultValue="@string/preference_consumer_key_default_value"
+            android:title="@string/preference_consumer_key_edit_box_title"
+            android:inputType="number"
+            android:key="consumerKey"
+        />
+        <EditTextPreference
+           android:title="@string/preference_refresh_rate"
+           android:enabled="false"
+           android:key="refreshRate"
+        />
+        <ListPreference
+           android:title="@string/preference_region_list"
+           android:enabled="false"
+           android:key="regionList"
+        />
+    </PreferenceCategory>
+</PreferenceScreen>
