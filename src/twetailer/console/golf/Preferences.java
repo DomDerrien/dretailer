@@ -16,7 +16,7 @@ public class Preferences extends PreferenceActivity {
     public static Long consumerKey = 0L;
 
     /**
-     * Helper loading the consumer key from the preferences, or initialising for future references
+     * Helper loading the consumer key from the preferences, or initializing for future references
      *
      * @param preferences Bag to use for the lookup
      * @return Value of the consumer key

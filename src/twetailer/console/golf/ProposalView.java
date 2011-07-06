@@ -120,7 +120,7 @@ public class ProposalView extends Activity {
                 message.what = LOAD_OPERATION;
                 Bundle bundle = new Bundle();
                 try {
-                    String urlParameters = "includeLocaleCodes=true";
+                    String urlParameters = "related=Store";
                     String response = HttpConnector.getHelper(
                             Command.PROPOSAL_ENTITY,
                             String.valueOf(proposalKeys[proposalIdx]),
@@ -148,7 +148,7 @@ public class ProposalView extends Activity {
                 Bundle bundle = new Bundle();
                 try {
                     long proposalKey = proposalKeys[proposalIdx];
-                    String urlParameters = "{'"+Entity.KEY+"':"+proposalKey+",'"+Entity.STATE+"':'"+Entity.STATE_CONFIRMED+"'}";
+                    String urlParameters = "{'pointOfView':'CONSUMER','"+Entity.STATE+"':'"+Entity.STATE_CONFIRMED+"'}";
                     String response = HttpConnector.putHelper(
                             Command.PROPOSAL_ENTITY,
                             String.valueOf(proposalKey),
@@ -183,7 +183,7 @@ public class ProposalView extends Activity {
                         switch (message.what) {
                         case LOAD_OPERATION:
                             currentProposal = data.getJSONObject("resource");
-                            currentStore = data.getJSONObject("relatedResource");
+                            currentStore = currentProposal.getJSONObject("related").getJSONObject("Store");
                             fillData(ProposalView.this, currentProposal, currentStore);
                             break;
                         case CONFIRM_OPERATION:

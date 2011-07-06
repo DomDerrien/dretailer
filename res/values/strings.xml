@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- commands -->
-    <string name="create_demand">New Game</string>
+    <string name="create_demand">Prepare new Round</string>
     <string name="update_demand">Update</string>
     <string name="cancel_demand">Cancel</string>
     <string name="view_demand">View</string>
@@ -23,10 +23,11 @@
     <!-- dashboard related labels -->
     <string name="dashboard_name">Twetailer Reservation Desk</string>
     <string name="dashboard_preferences">Preferences</string>
+    <string name="dashboard_authorization">Authentication</string>
     <string name="dashboard_refresh_list">Get Updates</string>
     <string name="dashboard_view_proposals">View Proposal(s)</string>
     <string name="dashboard_reset_list">Reload List</string>
-    <string name="dashboard_list_no_activity_yet">No Activity Yet!</string>
+    <string name="dashboard_list_no_activity_yet">No round reservation yet!</string>
     <string name="dashboard_fetching_data_message">Fetching Data...</string>
     <string name="criteria_label">Criteria</string>
 
@@ -80,5 +81,6 @@
 
     <string name="money_pattern">{1}{0}</string>
     <string name="money_dollar_US">$</string>
+    <string name="api_mime_type">text/javascript</string>
 
 </resources>

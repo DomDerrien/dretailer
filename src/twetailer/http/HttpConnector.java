@@ -14,6 +14,11 @@ import org.json.JSONTokener;
 
 import twetailer.console.golf.Preferences;
 import twetailer.dao.StorageConverter;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 
 /**
  * Utility class wrapping the
@@ -24,8 +29,8 @@ public class HttpConnector {
 
     /* Temporary hack 1 -- start
      * ========================= */
-    // private final static String TWETAILER_URL = "http://twetailer.appspot.com/";
-    private final static String TWETAILER_URL = "http://10.0.2.2:9999/"; // to be able to lookup from the Android emulator on the hosting machine
+    private final static String TWETAILER_URL = "http://twetailer.appspot.com/";
+    // private final static String TWETAILER_URL = "http://10.0.2.2:9999/"; // to be able to lookup from the Android emulator on the hosting machine
     // private final static String TWETAILER_API_PATH = "API/";
     private final static String TWETAILER_API_PATH = "shortcut/";
     /* =======================
@@ -36,6 +41,12 @@ public class HttpConnector {
     private final static String METHOD_PUT = "PUT";
     private final static String METHOD_DELETE = "DELETE";
 
+    private static String versionName;
+    
+    public static void keepContextualInformation(Context context) throws NameNotFoundException {
+    	PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+    	versionName = info.versionName + "/" + Build.VERSION.RELEASE;
+    }
     /**
      * Wrapper over the HttpUrlConnection class to exchange data with the Twetailer REST API
      *
@@ -61,11 +72,11 @@ public class HttpConnector {
                 /* Temporary hack 2 -- start
                  * ========================= */
                 Long consumerKey = Preferences.consumerKey;
-                url += "&maximumResults=10&ownerKey=" + consumerKey;
+                url += "&maximumResults=10&shortId=" + consumerKey;
             }
             else {
                 Long consumerKey = Preferences.consumerKey;
-                url += "?maximumResults=10&ownerKey=" + consumerKey;
+                url += "?maximumResults=10&shortId=" + consumerKey;
                 /* =======================
                  * Temporary hack 2 -- end */
             }
@@ -81,6 +92,8 @@ public class HttpConnector {
             httpConn.setRequestMethod(method);
             httpConn.setDoInput(true);
             httpConn.setRequestProperty("Accept", "application/json");
+            httpConn.setRequestProperty("Accept-Encoding", "gzip");
+            httpConn.addRequestProperty("User-Agent", "dretailer/" + versionName);  
             if (METHOD_GET.equals(method)) {
                 httpConn.setDoOutput(false);
                 httpConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

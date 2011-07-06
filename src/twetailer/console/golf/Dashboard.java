@@ -1,5 +1,21 @@
 package twetailer.console.golf;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import oauth.signpost.OAuthConsumer;
+import oauth.signpost.OAuthProvider;
+import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
+import oauth.signpost.commonshttp.CommonsHttpOAuthProvider;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,29 +28,33 @@ import twetailer.dto.Command;
 import twetailer.dto.Demand;
 import twetailer.dto.Entity;
 import twetailer.http.HttpConnector;
+import twetailer.j2ee.OAuthVerifierServlet;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import domderrien.i18n.DateUtils;
 
 /**
@@ -43,6 +63,9 @@ import domderrien.i18n.DateUtils;
  * @author Dom Derrien
  */
 public class Dashboard extends ListActivity {
+
+    private OAuthConsumer consumer;
+    private OAuthProvider provider;
 
     private DemandStorage localStorage;
     private Cursor cursor = null;
@@ -68,7 +91,7 @@ public class Dashboard extends ListActivity {
                 message.what = LOAD_DEMANDS_ID;
                 Bundle bundle = new Bundle();
                 try {
-                    String urlParameters = "includeLocaleCodes=true";
+                    String urlParameters = "related=Location";
                     if (lastModificationDate != null) {
                         urlParameters += "&" + Entity.MODIFICATION_DATE + "=" + DateUtils.millisecondsToISO(lastModificationDate);
                     }
@@ -115,8 +138,11 @@ public class Dashboard extends ListActivity {
                     if (data.getBoolean("success")) {
                         switch (message.what) {
                         case LOAD_DEMANDS_ID:
-                            if (data.opt("relatedResources") != null) {
-                                City.consolidate(data.getJSONArray("relatedResources"));
+                            if (data.opt("related") != null) {
+                            	JSONObject related = data.getJSONObject("related");
+                            	if (related.opt("Location") != null) {
+                            		City.consolidate(related.getJSONArray("relatedResources"));
+                            	}
                             }
                             localStorage.refreshDemands(data.getJSONArray("resources"));
                             break;
@@ -154,7 +180,7 @@ public class Dashboard extends ListActivity {
     };
 
     /**
-     * Handler customising the rows inserted in the ListView embedded in this ListActivity
+     * Handler customizing the rows inserted in the ListView embedded in this ListActivity
      */
     public class DemandViewBinder implements SimpleCursorAdapter.ViewBinder {
         public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
@@ -247,6 +273,8 @@ public class Dashboard extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("onCreate", "application create !");
+        onNewIntent(getIntent());
 
         // Attach the view
         setContentView(R.layout.dashboard);
@@ -279,6 +307,7 @@ public class Dashboard extends ListActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e("onDestroy", "application destroyed :(");
 
         localStorage.close();
 }
@@ -307,6 +336,7 @@ public class Dashboard extends ListActivity {
         menu.add(0, Menu.FIRST + 0, Menu.NONE, R.string.create_demand);
         menu.add(0, Menu.FIRST + 1, Menu.NONE, R.string.dashboard_reset_list);
         menu.add(0, Menu.FIRST + 3, Menu.NONE, R.string.dashboard_preferences);
+        menu.add(0, Menu.FIRST + 4, Menu.NONE, R.string.dashboard_authorization);
 
         return result;
     }
@@ -330,6 +360,43 @@ public class Dashboard extends ListActivity {
         case Menu.FIRST+3:
             intent = new Intent(this, Preferences.class);
             startActivity(intent);
+            return true;
+        case Menu.FIRST+4:
+            String appId = "twetailer";
+            
+            consumer = new CommonsHttpOAuthConsumer(
+                    OAuthVerifierServlet.getOAuthKey(appId),
+                    OAuthVerifierServlet.getOAuthSecret(appId));
+
+            provider = new CommonsHttpOAuthProvider(
+                    OAuthVerifierServlet.getRequestTokenUrl(appId),
+                    OAuthVerifierServlet.getAccessTokenUrl(appId),
+                    OAuthVerifierServlet.getAuthorizeUrl(appId));
+
+            // 2. Request token & authorization URL build up
+            try {
+                Log.e("Menu", "Trying to get the Token URL");
+                String requestTokenUrl = provider.retrieveRequestToken(consumer, "ase://oauthresponse");
+                Log.e("Menu", "Request token URL: " + requestTokenUrl);
+                
+                // The response is going to be handled by the <intent/> registered for that custom protocol
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(requestTokenUrl));
+                // startActivityForResult(intent, Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                Log.e("Menu", "Activity view started");
+            }
+            catch(OAuthCommunicationException ex) {
+                Toast.makeText(Dashboard.this, "Communication exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            catch (OAuthMessageSignerException ex) {
+                Toast.makeText(Dashboard.this, "Message signer exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            catch (OAuthNotAuthorizedException ex) {
+                Toast.makeText(Dashboard.this, "Not authorized exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            catch (OAuthExpectationFailedException ex) {
+                Toast.makeText(Dashboard.this, "Expectation failed exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -453,6 +520,10 @@ public class Dashboard extends ListActivity {
         super.onActivityResult(requestCode, resultCode, intent);
 
         if (intent != null) {
+            Log.e("onActivityResult", "New intent called");
+            Uri uri = intent.getData();
+            Log.e("onActivityResult", "URI: " + uri);
+
             final Bundle extras = intent.getExtras();
             if (extras != null) {
                 progressDialog = ProgressDialog.show(Dashboard.this, "", getString(R.string.dashboard_fetching_data_message));
@@ -496,6 +567,99 @@ public class Dashboard extends ListActivity {
                     }
                 }.start();
             }
+        }
+    }
+    
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Uri uri = intent.getData();
+
+        Log.e("onNewIntent", "URI: " + uri);
+        if (uri != null && uri.toString().startsWith("ase://oauthresponse")) {
+            String code = uri.getQueryParameter("oauth_verifier");
+            Log.e("onNewIntent", "verfier: " + code);
+            
+            try {
+                provider.retrieveAccessToken(consumer, code);
+            }
+            catch(OAuthCommunicationException ex) {
+                Toast.makeText(Dashboard.this, "Communication exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            catch (OAuthMessageSignerException ex) {
+                Toast.makeText(Dashboard.this, "Message signer exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            catch (OAuthNotAuthorizedException ex) {
+                Toast.makeText(Dashboard.this, "Not authorized exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            catch (OAuthExpectationFailedException ex) {
+                Toast.makeText(Dashboard.this, "Expectation failed exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+            }
+            //new AlertDialog.Builder(Dashboard.this).setTitle("New intent called ;)").setMessage("URI: " + uri.toString() + "\nCode: " + code).show();
+            new AlertDialog.Builder(Dashboard.this)
+                .setTitle("New intent called ;)")
+                .setMessage("Key: " + consumer.getToken() + "\n\nSecret: " + consumer.getTokenSecret())
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        try {
+                            String appId = "twetailer";
+                            HttpGet request = new HttpGet("http://" + appId + ".appspot.com/oauth");
+                            // consumer.sign(request);
+                            HttpClient httpClient = new DefaultHttpClient();
+                            HttpResponse response = httpClient.execute(request);
+                            String message = "response code: " + response.getStatusLine().getStatusCode();
+                            message += "\n" + response.getEntity().getContentType();
+                            InputStream in = response.getEntity().getContent();
+                            StringBuilder jsonBag = new StringBuilder(2048);
+                            try {
+                                int byteReadNb;
+                                byte[] buffer = new byte[2048];
+                                while ((byteReadNb = in.read(buffer)) != -1) {
+                                    jsonBag.append(new String(buffer, 0, byteReadNb));
+                                }
+                            }
+                            finally {
+                                in.close();
+                            }
+                            new AlertDialog.Builder(Dashboard.this).setTitle("New intent called ;)").setMessage(message+"\n"+jsonBag).show();
+
+                            /*
+                            java.net.URL url = new java.net.URL("http://" + appId + ".appspot.com/oauth");
+                            java.net.HttpURLConnection twetailerRequest = (java.net.HttpURLConnection) url.openConnection();
+                            consumer.setTokenWithSecret(consumer.getToken(), consumer.getTokenSecret());
+                            consumer.sign(twetailerRequest);
+                            twetailerRequest.connect();
+
+                            int statusCode = twetailerRequest.getResponseCode();
+                            new AlertDialog.Builder(Dashboard.this).setTitle("New intent called ;)").setMessage("Response code: " + statusCode).show();
+                            new AlertDialog.Builder(Dashboard.this).setTitle("New intent called ;)").setMessage("Content type: " + twetailerRequest.getContentType()).show();
+                            InputStream in = twetailerRequest.getInputStream();
+                            StringBuilder jsonBag = new StringBuilder(2048);
+                            try {
+                                int byteReadNb;
+                                byte[] buffer = new byte[2048];
+                                while ((byteReadNb = in.read(buffer)) != -1) {
+                                    jsonBag.append(new String(buffer, 0, byteReadNb));
+                                }
+                            }
+                            finally {
+                                in.close();
+                            }
+                            */
+                            }
+                            catch(IOException ex) {
+                                Toast.makeText(Dashboard.this, "Conection to Twetailer exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                            catch(Exception ex) {
+                                Log.e("onNewIntent", "exception: " + ex.getClass().getName());
+                                Log.e("onNewIntent", "message: " + ex.getMessage());
+                                Toast.makeText(Dashboard.this, "Request cannot be signed exception -- " + ex.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                    }
+                })
+                .show();
+
+            // consumer.setTokenWithSecret("1/dX7EdE6S7cNuVBWlIBYsl9C3r080ntR7l5VYrRr6wy0", "M_Bx1sNlG53qhTSD2A_aG23V");
+
         }
     }
 }

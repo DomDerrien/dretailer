@@ -14,7 +14,7 @@ import twetailer.dto.Entity;
 import twetailer.dto.Location;
 
 /**
- * Wrapper of the Location class to place a customisable name in place of {postalCode; countryCode}
+ * Wrapper of the Location class to place a customizable name in place of {postalCode; countryCode}
  *
  * @author Dom Derrien
  */
@@ -163,7 +163,7 @@ public class City implements Comparable<City> {
     }
 
     /**
-     * Try to the index of a customised city that match the given one
+     * Try to the index of a customized city that match the given one
      *
      * @param proposal Incomplete city description, with probably no name
      * @return The index of a corresponding city or <code>null</code>
@@ -185,10 +185,10 @@ public class City implements Comparable<City> {
     }
 
     /**
-     * Try to match the given city among the ones customised for the user
+     * Try to match the given city among the ones customized for the user
      *
      * @param proposal Incomplete city description, with probably no name
-     * @return The given city or a corresponding one possibly customised
+     * @return The given city or a corresponding one possibly customized
      *
      * @see City#lookupCityIndex(City)
      */
@@ -205,20 +205,20 @@ public class City implements Comparable<City> {
     static {
         /* Temporary hack 1 -- start
          * ========================= */
-        /** /
+        /**/
         cities.add(new City(387001L, "H3H1A2", "CA", "Montréal"));
         cities.add(new City(388001L, "J4J3K7", "CA", "Longueuil"));
         cities.add(new City(389001L, "J8E1T1", "CA", "Mont Tremblant"));
         cities.add(new City(390001L, "J6J1Z6", "CA", "Châteauguay"));
         cities.add(new City(391001L, "J4B8L1", "CA", "Boucherville"));
         cities.add(new City(387002L, "H7M5C8", "CA", "Laval"));
-        /**/
-        cities.add(new City(954L, "H3H1A2", "CA", "Montréal"));
-        cities.add(new City(955L, "J4J3K7", "CA", "Longueuil"));
-        cities.add(new City(956L, "J8E1T1", "CA", "Mont Tremblant"));
-        cities.add(new City(957L, "J6J1Z6", "CA", "Châteauguay"));
-        cities.add(new City(958L, "J4B8L1", "CA", "Boucherville"));
-        cities.add(new City(959L, "H7M5C8", "CA", "Laval"));
+        /** /
+        cities.add(new City(138L, "H3H1A2", "CA", "Montréal"));
+        cities.add(new City(139L, "J4J3K7", "CA", "Longueuil"));
+        cities.add(new City(140L, "J8E1T1", "CA", "Mont Tremblant"));
+        cities.add(new City(141L, "J6J1Z6", "CA", "Châteauguay"));
+        cities.add(new City(142L, "J4B8L1", "CA", "Boucherville"));
+        cities.add(new City(143L, "H7M5C8", "CA", "Laval"));
         /**/
         /* =======================
          * Temporary hack 1 -- end */
@@ -228,7 +228,7 @@ public class City implements Comparable<City> {
 
     /**
      * Accessor on the list of registered cities.
-     * Be carefull to not manipulate it directly!
+     * Be careful to not manipulate it directly!
      *
      * @return List of registered cities
      */

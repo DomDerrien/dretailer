@@ -95,7 +95,7 @@ public class DemandStorage extends CommonStorage {
     }
 
     /**
-     * Initialise the database with the given data
+     * Initialize the database with the given data
      */
     public void refreshDemands(JSONArray demands) {
         int demandNb = demands.length();

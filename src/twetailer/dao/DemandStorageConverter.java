@@ -112,7 +112,7 @@ public class DemandStorageConverter {
             String cc = in.getString(Command.CC);
             JSONArray ccArray = new JSONArray();
             if (cc != null && 0 < cc.length()) {
-                String[] ccParts = cc.split(" ");
+                String[] ccParts = cc.split("(?:\\s|\\n|,|;)+");
                 for (int i=0; i<ccParts.length; i++) {
                     if (0 < ccParts[i].length()) {
                         ccArray.put(ccParts[i]);
@@ -125,7 +125,7 @@ public class DemandStorageConverter {
             String criteria = in.getString(Command.CRITERIA);
             JSONArray criterionArray = new JSONArray();
             if (criteria != null && 0 < criteria.length()) {
-                String[] criteriaParts = criteria.split(" ");
+                String[] criteriaParts = criteria.split("(?:\\s|\\n|,|;)+");
                 for (int i=0; i<criteriaParts.length; i++) {
                     if (0 < criteriaParts[i].length()) {
                         criterionArray.put(criteriaParts[i]);
@@ -138,7 +138,7 @@ public class DemandStorageConverter {
             String criteria = in.getString(Command.HASH_TAGS);
             JSONArray criterionArray = new JSONArray();
             if (criteria != null && 0 < criteria.length()) {
-                String[] criteriaParts = criteria.split(" ");
+                String[] criteriaParts = criteria.split("(?:\\|,|;)+");
                 for (int i=0; i<criteriaParts.length; i++) {
                     if (0 < criteriaParts[i].length()) {
                         criterionArray.put(criteriaParts[i]);
